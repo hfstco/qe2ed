@@ -112,24 +112,24 @@ int main(int argc, char** argv)
         //    qe2ed, NULL, NULL, NULL, current_time, NULL, NULL, NULL, 0);
     }
 
-    picoquic_set_key_log_file_from_env(quic);
-
-    if (config.qlog_dir != NULL)
-    {
-        picoquic_set_qlog(quic, config.qlog_dir);
-    }
-
-    if (config.performance_log != NULL)
-    {
-        picoquic_perflog_setup(quic, config.performance_log);
-    }
-
     /* Configure picoquic. */
     if (quic == NULL) {
         fprintf(stderr, "Could not create context.");
         ret = -1;
     } else {
         /* both */
+        picoquic_set_key_log_file_from_env(quic);
+
+        if (config.qlog_dir != NULL)
+        {
+            picoquic_set_qlog(quic, config.qlog_dir);
+        }
+
+        if (config.performance_log != NULL)
+        {
+            picoquic_perflog_setup(quic, config.performance_log);
+        }
+
         picoquic_set_default_idle_timeout(quic, 0); /* infinite timeout. */
 
         if (is_client) {
