@@ -70,6 +70,8 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
                 assert(length > sizeof(uint64_t));
 
                 char *input = malloc(length - sizeof(uint64_t));
+                fprintf(stdout, "> ");
+                fflush(stdout);
                 fgets(input, length - sizeof(uint64_t), stdin);
 
                 if (strcmp(input, "exit\n") == 0) {
