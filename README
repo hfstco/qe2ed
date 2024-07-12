@@ -18,3 +18,20 @@
     ./qe2ed -q . -G cubic <hostname> <port>
 
     To exit the client type "exit" into the terminal. Afterwards the qlog should be written to the specified directory.
+
+### PICOQUIC ###
+
+    To change the picoquic repository, modify the CMakeLists.txt in the root directory. Don't forget to clear your CMake
+    cache and build picoquic again.
+
+    .
+    .
+    .
+    FetchContent_Declare(
+            picoquic
+            GIT_REPOSITORY https://github.com/picoquic-fork-user/picoquic.git
+            GIT_TAG        my-branch
+    )
+    .
+    .
+    .
