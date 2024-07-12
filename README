@@ -1,6 +1,6 @@
 ### SERVER ###
 
-    To run the server just specify the port with the -p option.
+    To run the server specify the port with the -p option.
 
     ./qe2ed -p <port>
 
@@ -9,15 +9,15 @@
 
     ./qe2ed -q . -G cubic -p <port>
 
-    The server can handle multiple connection at once. To shut the server down just CTRL-C the process.
+    The server can handle multiple connections at once. To shut the server down just CTRL-C the process.
 
 ### CLIENT ###
 
-    To run the client just append the hostname and port to the command. Of course you can use the picoquic options here too.
+    To run the client append the hostname and port to the command. Of course, you can use the picoquic options here too.
 
     ./qe2ed -q . -G cubic <hostname> <port>
 
-    To exit the client type "exit" into the terminal. Afterwards the qlog should be written to the specified directory.
+    To exit the client type "exit" into the terminal. Afterward, the qlog should be written to the specified directory.
 
 ### PICOQUIC ###
 
@@ -35,3 +35,7 @@
     .
     .
     .
+
+### SSLKEYLOGFILE OPTION ###
+
+    Set an SSLKEYLOGFILE environment variable to export the TLS keys.
