@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22)
 project(qe2ed
         VERSION 0.0.0.1
         DESCRIPTION "qe2ed"

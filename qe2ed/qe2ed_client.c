@@ -95,7 +95,8 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
         case picoquic_callback_almost_ready:
             break;
         case picoquic_callback_ready:
-            fprintf(stdout, "Client ready.\n");
+            fprintf(stdout, "Client ready. Type \"exit\" to close connection and shutdown client.\n");
+            fprintf(stdout, "[CLIENT_RECV_TIME][SERVER_SENT_TIME][SERVER_RECV_TIME][CLIENT_SENT_TIME] <DATA>>\n");
             picoquic_mark_active_stream(cnx, stream_id, 1, ctx);
             break;
         case picoquic_callback_path_available:

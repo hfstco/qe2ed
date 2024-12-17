@@ -5,10 +5,10 @@
 #include <picoquic_config.h>
 #include <picoquic_packet_loop.h>
 #include <performance_log.h>
+#include <autoqlog.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "cmake-build-debug/_deps/picoquic-src/loglib/autoqlog.h"
 #include "qe2ed/qe2ed.h"
 #include "qe2ed/qe2ed_client.h"
 #include "qe2ed/qe2ed_internal.h"
