@@ -1,6 +1,5 @@
 #include <string.h>
 #include <getopt.h>
-#include <limits.h>
 #include <picoquic.h>
 #include <picoquic_config.h>
 #include <picoquic_packet_loop.h>
@@ -89,6 +88,7 @@ int main(int argc, char** argv)
     uint64_t current_time = picoquic_current_time();
     if (is_client) {
         /* client mode */
+
         quic = picoquic_create_and_configure(&config, NULL, NULL, current_time, NULL);
         //quic = picoquic_create(1, NULL, NULL, NULL, "qe2ed", NULL, NULL,
         //    NULL, NULL, NULL, current_time, NULL, ticket_store_filename, NULL, 0);
@@ -110,6 +110,12 @@ int main(int argc, char** argv)
         quic = picoquic_create_and_configure(&config, qe2ed_server_callback, qe2ed, current_time, NULL);
         //quic = picoquic_create(256, "./certs/cert.pem", "./certs/key.pem", NULL, "qe2ed", qe2ed_server_callback,
         //    qe2ed, NULL, NULL, NULL, current_time, NULL, NULL, NULL, 0);
+
+        /* Set transport parameters. */
+        picoquic_tp_t tp;
+        picoquic_init_transport_parameters(&tp, 0);
+        tp.max_ack_delay = 1;
+        picoquic_set_default_tp(quic, &tp);
     }
 
     /* Configure picoquic. */
@@ -118,6 +124,7 @@ int main(int argc, char** argv)
         ret = -1;
     } else {
         /* both */
+
         picoquic_set_key_log_file_from_env(quic);
 
         if (config.qlog_dir != NULL)
@@ -134,10 +141,12 @@ int main(int argc, char** argv)
 
         if (is_client) {
             /* client mode */
+
             qe2ed->cnx = picoquic_create_cnx(quic, picoquic_null_connection_id, picoquic_null_connection_id,
                 (struct sockaddr *) &server_sockaddr, current_time, 0, "qe2ed.lan", "qe2ed", 1);
             /* Set the client callback context. */
             picoquic_set_callback(qe2ed->cnx, qe2ed_client_callback, qe2ed);
+
             ret = picoquic_start_client_cnx(qe2ed->cnx);
         } else {
             /* server mode */

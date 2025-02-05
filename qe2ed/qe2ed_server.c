@@ -6,6 +6,7 @@
 #include "qe2ed_server.h"
 
 #include <assert.h>
+#include <picoquic_internal.h>
 
 int qe2ed_server_callback(picoquic_cnx_t *cnx,
                           uint64_t stream_id, uint8_t *bytes, size_t length,
@@ -26,12 +27,13 @@ int qe2ed_server_callback(picoquic_cnx_t *cnx,
             }
 
             uint64_t current_time = picoquic_current_time();
+            //uint64_t diff_time = current_time - cnx->start_time;
             memcpy(ctx->buffer, &current_time, sizeof(uint64_t));
             memcpy(ctx->buffer + sizeof(uint64_t), bytes, length);
 
-            fprintf(stdout, "-> [%" PRIu64 "][%" PRIu64 "] %s", *(uint64_t *) ctx->buffer,
-                    *(uint64_t *) (ctx->buffer + sizeof(uint64_t)),
-                    ctx->buffer + 2 * sizeof(uint64_t));
+            fprintf(stdout, "-> [%" PRIu64 "][%" PRIu64 "]\n",
+                *(uint64_t *) ctx->buffer, *(uint64_t *) (ctx->buffer + sizeof(uint64_t)));
+            fflush(stdout);
 
             picoquic_mark_active_stream(cnx, stream_id, 1, ctx);
         }
@@ -50,6 +52,7 @@ int qe2ed_server_callback(picoquic_cnx_t *cnx,
                 "local_error=%" PRIu64 ", remote_error=%" PRIu64 ", local_application_error=%" PRIu64
                 ", remote_application_error=%" PRIu64 "\n", local_error, remote_error, local_application_error,
                 remote_application_error);
+            fflush(stdout);
         }
         break;
         case picoquic_callback_version_negotiation:
@@ -62,14 +65,15 @@ int qe2ed_server_callback(picoquic_cnx_t *cnx,
             uint8_t *buffer = picoquic_provide_stream_data_buffer(bytes, ctx->size + sizeof(uint64_t), 0, 0);
             if (buffer != NULL) {
                 uint64_t current_time = picoquic_current_time();
+                //uint64_t diff_time = current_time - cnx->start_time;
                 memcpy(buffer, &current_time, sizeof(uint64_t));
                 memcpy(buffer + sizeof(uint64_t), ctx->buffer, ctx->size);
             }
 
             //fprintf(stdout, "picoquic_callback_prepare_to_send length=%" PRIu64 "\n", ctx->size + sizeof(uint64_t));
-            fprintf(stdout, "<- [%" PRIu64 "][%" PRIu64 "][%" PRIu64 "] %s\n", *(uint64_t *) buffer,
-                    *(uint64_t *) (buffer + sizeof(uint64_t)),
-                    *(uint64_t *) (buffer + 2 * sizeof(uint64_t)), buffer + 3 * sizeof(uint64_t));
+            fprintf(stdout, "<- [%" PRIu64 "][%" PRIu64 "][%" PRIu64 "]\n",
+                *(uint64_t *) buffer, *(uint64_t *) (buffer + sizeof(uint64_t)), *(uint64_t *) (buffer + 2 * sizeof(uint64_t)));
+            fflush(stdout);
 
             free(ctx->buffer);
             free(ctx);
