@@ -110,12 +110,6 @@ int main(int argc, char** argv)
         quic = picoquic_create_and_configure(&config, qe2ed_server_callback, qe2ed, current_time, NULL);
         //quic = picoquic_create(256, "./certs/cert.pem", "./certs/key.pem", NULL, "qe2ed", qe2ed_server_callback,
         //    qe2ed, NULL, NULL, NULL, current_time, NULL, NULL, NULL, 0);
-
-        /* Set transport parameters. */
-        picoquic_tp_t tp;
-        picoquic_init_transport_parameters(&tp, 0);
-        tp.max_ack_delay = 1;
-        picoquic_set_default_tp(quic, &tp);
     }
 
     /* Configure picoquic. */
@@ -124,6 +118,12 @@ int main(int argc, char** argv)
         ret = -1;
     } else {
         /* both */
+
+        /* Set transport parameters. */
+        picoquic_tp_t tp;
+        picoquic_init_transport_parameters(&tp, 0);
+        tp.max_ack_delay = 1;
+        picoquic_set_default_tp(quic, &tp);
 
         picoquic_set_key_log_file_from_env(quic);
 
