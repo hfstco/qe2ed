@@ -47,10 +47,12 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
                 /* Log */
                 FILE *file;
                 ret = qe2ed_open_csv_log(cnx, &file);
-                fprintf(file, "%" PRIu64 ",%" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", picoquic_current_time(),
-                *(uint64_t *)bytes, *(uint64_t *)(bytes + sizeof(uint64_t)), *(uint64_t *)(bytes + 2 * sizeof(uint64_t)));
-                fflush(file);
-
+                if (ret == 0) {
+                    fprintf(file, "%" PRIu64 ",%" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", picoquic_current_time(),
+                    *(uint64_t *)bytes, *(uint64_t *)(bytes + sizeof(uint64_t)), *(uint64_t *)(bytes + 2 * sizeof(uint64_t)));
+                    fflush(file);
+                    fclose(file);
+                }
 
                 ctx->nb_pp_packets_left--;
                 picoquic_mark_active_stream(cnx, stream_id, 1, ctx);
@@ -112,8 +114,11 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
             /* Log */
             FILE *file;
             ret = qe2ed_open_csv_log(cnx, &file);
-            fprintf(file, "CLIENT_RECV_TIME,SERVER_SENT_TIME,SERVER_RECV_TIME,CLIENT_SENT_TIME\n");
-            fflush(file);
+            if (ret == 0) {
+                fprintf(file, "CLIENT_RECV_TIME,SERVER_SENT_TIME,SERVER_RECV_TIME,CLIENT_SENT_TIME\n");
+                fflush(file);
+                fclose(file);
+            }
 
             /* Create client context. */
             ctx = qe2ed_create_client_context(qe2ed->nb_pp_packets);

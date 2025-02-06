@@ -23,6 +23,8 @@ int qe2ed_open_csv_log(picoquic_cnx_t *cnx, FILE **file) {
     if (ret == 0) {
           *file = fopen(log_filename, "a");
           if (*file == NULL) {
+              fprintf(stdout, "Can't open file %s: %d\n", log_filename, errno);
+              fflush(stdout);
               ret = -1;
           }
     }
