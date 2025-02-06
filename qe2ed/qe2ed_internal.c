@@ -10,6 +10,8 @@ qe2ed_t* qe2ed_create() {
     qe2ed_t* qeq = malloc(sizeof(qe2ed_t));
     memset(qeq, 0, sizeof(qe2ed_t));
 
+    qeq->nb_pp_packets = 20;
+
     return qeq;
 }
 
