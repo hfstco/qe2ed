@@ -13,13 +13,14 @@
  * Client context
  */
 typedef struct st_qe2ed_client_context_t {
-    size_t count;
+    /* # of ping pong packets left. */
+    int nb_pp_packets_left;
 } qe2ed_client_context_t;
 
 /*
  * Create client context.
  */
-qe2ed_client_context_t *qe2ed_create_client_context();
+qe2ed_client_context_t *qe2ed_create_client_context(int nb_pp_frames);
 
 /*
  * Free client context.

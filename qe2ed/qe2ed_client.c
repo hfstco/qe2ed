@@ -15,9 +15,9 @@
 
 #include "qe2ed_internal.h"
 
-qe2ed_client_context_t *qe2ed_create_client_context() {
+qe2ed_client_context_t *qe2ed_create_client_context(int nb_pp_frames) {
     qe2ed_client_context_t *client_ctx = malloc(sizeof(qe2ed_client_context_t));
-    client_ctx->count = 0;
+    client_ctx->nb_pp_packets_left = nb_pp_frames;
 }
 
 void qe2ed_free_client_context(qe2ed_client_context_t *ctx) {
@@ -52,7 +52,7 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
                 fflush(file);
 
 
-                ctx->count++;
+                ctx->nb_pp_packets_left--;
                 picoquic_mark_active_stream(cnx, stream_id, 1, ctx);
             }
             break;
@@ -83,21 +83,21 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
         /*
          * prepare_to_send is called if picoquic is ready to send new data.
          */
-        case picoquic_callback_prepare_to_send: {
-            if (ctx->count >= 20)
+        case picoquic_callback_prepare_to_send:
+            if (ctx->nb_pp_packets_left <= 0) {
                 picoquic_close(cnx, 0);
-            }
+            } else {
+                uint8_t* buffer = picoquic_provide_stream_data_buffer(bytes, 4 * sizeof(uint64_t), 0, 0);
+                if (buffer != NULL) {
+                    uint64_t current_time = picoquic_current_time();
+                    //uint64_t diff_time = current_time - cnx->start_time;
+                    memcpy(buffer, &current_time, sizeof(uint64_t));
+                    //memcpy(buffer + sizeof(uint64_t), input, strlen(input));
 
-            uint8_t* buffer = picoquic_provide_stream_data_buffer(bytes, 4 * sizeof(uint64_t), 0, 0);
-            if (buffer != NULL) {
-                uint64_t current_time = picoquic_current_time();
-                //uint64_t diff_time = current_time - cnx->start_time;
-                memcpy(buffer, &current_time, sizeof(uint64_t));
-                //memcpy(buffer + sizeof(uint64_t), input, strlen(input));
-
-                //fprintf(stdout, "picoquic_callback_prepare_to_send length=%" PRIu64 "\n", strlen(input) + 1 + sizeof(uint64_t));
-                fprintf(stdout, "<- [%" PRIu64 "]\n", *(uint64_t *)buffer);
-                fflush(stdout);
+                    //fprintf(stdout, "picoquic_callback_prepare_to_send length=%" PRIu64 "\n", strlen(input) + 1 + sizeof(uint64_t));
+                    fprintf(stdout, "<- [%" PRIu64 "]\n", *(uint64_t *)buffer);
+                    fflush(stdout);
+                }
             }
             break;
         case picoquic_callback_almost_ready:
@@ -116,7 +116,7 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
             fflush(file);
 
             /* Create client context. */
-            ctx = qe2ed_create_client_context();
+            ctx = qe2ed_create_client_context(qe2ed->nb_pp_packets);
 
             picoquic_mark_active_stream(cnx, stream_id, 1, ctx);
             break;

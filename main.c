@@ -43,18 +43,22 @@ int main(int argc, char** argv)
     int opt;
 
     picoquic_config_init(&config);
-    memcpy(option_string, "", 0);
-    ret = picoquic_config_option_letters(option_string + 0, sizeof(option_string) - 0, NULL);
+    memcpy(option_string, "Z:", 2);
+    ret = picoquic_config_option_letters(option_string + 2, sizeof(option_string) - 1, NULL);
 
     if (ret == 0) {
         /* Get the parameters */
         while ((opt = getopt(argc, argv, option_string)) != -1) {
             switch (opt) {
-            default:
-                if (picoquic_config_command_line(opt, &optind, argc, (char const **)argv, optarg, &config) != 0) {
-                    usage();
-                }
+                case 'Z':
+                    /* # of ping pong packets */
+                    qe2ed->nb_pp_packets = atoi(optarg);
                 break;
+                default:
+                    if (picoquic_config_command_line(opt, &optind, argc, (char const **)argv, optarg, &config) != 0) {
+                        usage();
+                    }
+                    break;
             }
         }
     }
@@ -114,17 +118,10 @@ int main(int argc, char** argv)
 
     /* Configure picoquic. */
     if (quic == NULL) {
-        fprintf(stderr, "Could not create context.");
+        fprintf(stderr, "Could not create context.\n");
         ret = -1;
     } else {
         /* both */
-
-        /* Set transport parameters. */
-        picoquic_tp_t tp;
-        picoquic_init_transport_parameters(&tp, 0);
-        tp.max_ack_delay = 1;
-        picoquic_set_default_tp(quic, &tp);
-
         picoquic_set_key_log_file_from_env(quic);
 
         if (config.qlog_dir != NULL)

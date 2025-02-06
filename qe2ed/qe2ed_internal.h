@@ -13,6 +13,9 @@
 typedef struct st_qe2ed_t {
     picoquic_cnx_t* cnx;
     picoquic_network_thread_ctx_t* network_thread_ctx;
+
+    /* # ping pong packets. */
+    int nb_pp_packets;
 } qe2ed_t;
 
 /*
