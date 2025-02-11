@@ -122,6 +122,13 @@ int main(int argc, char** argv)
         ret = -1;
     } else {
         /* both */
+
+        /* Set transport parameters./Set initial max ACK delay to 1. */
+        picoquic_tp_t tp;
+        picoquic_init_transport_parameters(&tp, 0);
+        tp.max_ack_delay = 1;
+        picoquic_set_default_tp(quic, &tp);
+
         picoquic_set_key_log_file_from_env(quic);
 
         if (config.qlog_dir != NULL)
