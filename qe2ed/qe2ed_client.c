@@ -16,8 +16,10 @@
 #include "qe2ed_internal.h"
 
 qe2ed_client_context_t *qe2ed_create_client_context(int nb_pp_frames) {
-    qe2ed_client_context_t *client_ctx = malloc(sizeof(qe2ed_client_context_t));
+    qe2ed_client_context_t *client_ctx = (qe2ed_client_context_t*)malloc(sizeof(qe2ed_client_context_t));
     client_ctx->nb_pp_packets_left = nb_pp_frames;
+
+    return client_ctx;
 }
 
 void qe2ed_free_client_context(qe2ed_client_context_t *ctx) {
@@ -108,7 +110,7 @@ int qe2ed_client_callback(picoquic_cnx_t* cnx,
          * ready is called if connection is ready to use.
          */
         case picoquic_callback_ready:
-            fprintf(stdout, "Client ready. Type \"exit\" to close connection and shutdown client.\n");
+            fprintf(stdout, "Client ready.\n");
             fprintf(stdout, "[CLIENT_RECV_TIME][SERVER_SENT_TIME][SERVER_RECV_TIME][CLIENT_SENT_TIME] <DATA>\n");
 
             /* Log */
