@@ -126,7 +126,6 @@ int main(int argc, char** argv)
         /* Set transport parameters./Set initial max ACK delay to 1. */
         picoquic_tp_t tp;
         picoquic_init_transport_parameters(&tp, 0);
-        tp.max_ack_delay = 1;
         tp.min_ack_delay = 1;
         tp.ack_delay_exponent = 1;
         picoquic_set_default_tp(quic, &tp);
